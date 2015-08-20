@@ -77,8 +77,8 @@ function zzal(tup::Tuple{Page,Array})
   img = haskey(page.option, "IMG") ? page.option["IMG"] : "IMG"
   imgcat = "../images/imgcat.go"
   ispath(imgcat) && for slide in slides
-    slide <: Base.Markdown.MD && for content in slide.content
-      content <: Base.Markdown.List && for item in content.items
+    isa(slide, Base.Markdown.MD) && for content in slide.content
+      isa(content, Base.Markdown.List) && for item in content.items
         for el in item
           if startswith(el, img)
             zz,image = split(el, "$img ")
@@ -95,7 +95,7 @@ function open(page::Page, site::Int)
   counter = 0
   for slide in page |> proper |> slides
     for content in slide.content
-      content <: Base.Markdown.List && for item in content.items
+      isa(content, Base.Markdown.List) && for item in content.items
         for el in item
           m = match(r"http.*", el)
           if isa(m, RegexMatch)
@@ -120,13 +120,13 @@ macro page()
 end
 
 macro current()
-  :( $(esc(:page)) |> proper |> slides )
+  :( $(esc(:page)) |> proper |> zzal |> slides )
 end
 
 macro next()
   clear()
   println()
-  :( next!($(esc(:page))) |> proper |> slides )
+  :( next!($(esc(:page))) |> proper |> zzal |> slides )
 end
 
 macro prev()
