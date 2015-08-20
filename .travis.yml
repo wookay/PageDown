@@ -8,3 +8,5 @@ julia:
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'Pkg.clone(pwd()); Pkg.build("PageDown"); Pkg.test("PageDown"; coverage=true)'
+after_success:
+    - julia -e 'if VERSION >= v"0.4-"; cd(Pkg.dir("PageDown")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder()); end'
