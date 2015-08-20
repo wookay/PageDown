@@ -153,6 +153,10 @@ macro open(site::Int)
   :( open($(esc(:page)),$site) )
 end
 
+function Base.Markdown.term(t::Base.Pipe, a::Array{Base.Markdown.MD,1})
+  [Base.Markdown.term(t, e) for e in a]
+end
+
 function Base.Markdown.term(t::Base.TTY, a::Array{Base.Markdown.MD,1})
   [Base.Markdown.term(t, e) for e in a]
 end
