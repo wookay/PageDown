@@ -4,6 +4,8 @@ export Page, next!, prev!, go!, first!, last!
 export clear, proper
 export @page, @current, @next, @prev, @go, @first, @last, @step, @open
 
+__precompile__(true)
+
 type Page
   start::Int
   step::Int
