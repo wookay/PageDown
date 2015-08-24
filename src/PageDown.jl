@@ -96,7 +96,7 @@ end
 function open(page::Page, site::Int)
   counter = 0
   for slide in page |> proper |> slides
-    for content in slide.content
+    isa(slide, Base.Markdown.MD) && for content in slide.content
       isa(content, Base.Markdown.List) && for item in content.items
         for el in item
           m = match(r"http.*", el)
@@ -155,12 +155,10 @@ macro open(site::Int)
   :( open($(esc(:page)),$site) )
 end
 
-function Base.Markdown.term(t::Base.Pipe, a::Array{Base.Markdown.MD,1})
-  [Base.Markdown.term(t, e) for e in a]
-end
 
-function Base.Markdown.term(t::Base.TTY, a::Array{Base.Markdown.MD,1})
+# term
+Base.Markdown.term(t::Union{Base.Pipe,Base.TTY}, a::Array{Base.Markdown.MD,1}) =
   [Base.Markdown.term(t, e) for e in a]
-end
+Base.Markdown.term(t::Base.TTY, a::Array{ASCIIString,1}) = a
 
 end # module

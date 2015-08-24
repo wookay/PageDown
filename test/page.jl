@@ -29,4 +29,12 @@ first!(page)
 
 @test (page,["1"]) == proper(page)
 
+
+# coverage
+page = Page(1, 10, pages, Dict())
+@test_throws ArgumentError go!(page, 10)
+last!(page)
+@open 1
+Base.Markdown.term(STDOUT, @first)
+
 end
