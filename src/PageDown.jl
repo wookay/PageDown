@@ -158,8 +158,8 @@ end
 
 
 # term
-Base.Markdown.term(t::Union{Base.Pipe,Base.TTY}, a::Array{Base.Markdown.MD,1}) =
+Base.Markdown.term(t::Union{Base.PipeEndpoint,Base.TTY}, a::Array{Base.Markdown.MD,1}) =
   [Base.Markdown.term(t, e) for e in a]
-Base.Markdown.term(t::Union{Base.Pipe,Base.TTY}, a::Array{ASCIIString,1}) = a
+Base.Markdown.term(t::Union{Base.PipeEndpoint,Base.TTY}, a::Array{ASCIIString,1}) = a
 
 end # module
