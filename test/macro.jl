@@ -1,14 +1,10 @@
 module MacroTest
 
 using Base.Test
-
-push!(LOAD_PATH, "src")
-
 using PageDown
 
 pages = ["1", "2", "3", "4", "5"]
-#page = Page(1, 1, pages)
-page = Page(1, 1, pages, "IMG"=>"짤")
+page = Page(pages)
 
 @test (page.start:page.step:page.count) == @page
 @test ["1"] == @current

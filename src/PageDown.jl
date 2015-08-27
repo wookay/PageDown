@@ -7,18 +7,19 @@ export @page, @current, @next, @prev, @go, @first, @last, @step, @open
 __precompile__(true)
 
 type Page
+  pages::AbstractArray
   start::Int
   step::Int
-  pages::Array
-  count::Int
   option::Dict
-  Page(start, step, pages) = new(start, step, pages, length(pages), Dict())
-  Page(start, step, pages, option::Pair) = new(start, step, pages, length(pages), Dict(option))
-  Page(start, step, pages, option::Dict) = new(start, step, pages, length(pages), option)
+  count::Int
+  Page(pages::AbstractArray) = new(pages, 1, 1, Dict(), length(pages))
+  Page(pages::AbstractArray, start::Int, step::Int) = new(pages, start, step, Dict(), length(pages))
+  Page(pages::AbstractArray, start::Int, step::Int, option::Dict) = new(pages, start, step, option, length(pages))
+  Page(pages::AbstractArray, option::Pair...) = new(pages, 1, 1, Dict(option), length(pages))
 end
 
 function next!(page::Page)
-  if (page.start + page.step) < page.count
+  if (page.start + page.step) <= page.count
     page.start += page.step
   else
     #println("last page")
@@ -61,7 +62,7 @@ function clear()
 end
 
 function proper(page::Page)
-  if page.start + page.step < page.count
+  if page.start + page.step <= page.count
     slides = page.pages[page.start:page.start+page.step-1]
   else
     slides = page.pages[page.start:end]

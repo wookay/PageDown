@@ -1,13 +1,10 @@
 module PageTest
 
 using Base.Test
-
-push!(LOAD_PATH, "src")
-
 using PageDown
 
 pages = ["1", "2", "3", "4", "5"]
-page = Page(1, 1, pages)
+page = Page(pages)
 
 @test 1 == page.start
 @test 1 == page.step
@@ -31,7 +28,7 @@ first!(page)
 
 
 # coverage
-page = Page(1, 10, pages, Dict())
+page = Page(pages, 1, 10)
 @test_throws ArgumentError go!(page, 10)
 last!(page)
 @open 1
