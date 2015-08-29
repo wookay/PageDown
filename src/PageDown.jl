@@ -1,7 +1,7 @@
 module PageDown
 
 export Page, next!, prev!, go!, first!, last!
-export clear, proper
+export clear, proper, imgcat
 export @page, @current, @next, @prev, @go, @first, @last, @step, @open
 
 __precompile__(true)
@@ -16,6 +16,7 @@ type Page
   Page(pages::AbstractArray, start::Int, step::Int) = new(pages, start, step, Dict(), length(pages))
   Page(pages::AbstractArray, start::Int, step::Int, option::Dict) = new(pages, start, step, option, length(pages))
   Page(pages::AbstractArray, option::Pair...) = new(pages, 1, 1, Dict(option), length(pages))
+  Page(pages::AbstractArray, option::Dict) = new(pages, 1, 1, option, length(pages))
 end
 
 function next!(page::Page)
@@ -77,15 +78,16 @@ end
 
 function zzal(tup::Tuple{Page,Array})
   page,slides = tup
-  img = haskey(page.option, "IMG") ? page.option["IMG"] : "IMG"
-  imgcat = "../images/imgcat.go"
-  ispath(imgcat) && for slide in slides
+  img = haskey(page.option, :IMG) ? page.option[:IMG] : "IMG"
+  imgcmd = haskey(page.option, :imgcmd) ? page.option[:imgcmd] : "go run ../images/imgcat.go "
+  imgfolder = haskey(page.option, :imgfolder) ? page.option[:imgfolder] : "../images/"
+  for slide in slides
     isa(slide, Base.Markdown.MD) && for content in slide.content
       isa(content, Base.Markdown.List) && for item in content.items
         for el in item
           if startswith(el, img)
             zz,image = split(el, "$img ")
-            run(`go run $imgcat ../images/$image`)
+            run(`$imgcmd $imgfolder$image`)
           end
         end
       end
@@ -96,6 +98,7 @@ end
 
 function open(page::Page, site::Int)
   counter = 0
+  opencmd = haskey(page.option, :opencmd) ? page.option[:opencmd] : "open"
   for slide in page |> proper |> slides
     isa(slide, Base.Markdown.MD) && for content in slide.content
       isa(content, Base.Markdown.List) && for item in content.items
@@ -104,7 +107,7 @@ function open(page::Page, site::Int)
           if isa(m, RegexMatch)
             counter += 1
             if counter == site
-              run(`open $(m.match)`)
+              @osx_only run(`$opencmd $(m.match)`)
               return
             end
           end
